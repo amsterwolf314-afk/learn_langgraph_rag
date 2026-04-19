@@ -6,6 +6,7 @@
 venv/
 env/
 ENV/
+.cache/
 .langgraph_api/
 
 .python-version
