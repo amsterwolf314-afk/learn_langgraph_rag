@@ -1,25 +1,37 @@
 from langchain_core.messages import HumanMessage, convert_to_messages
 from langgraph.graph import MessagesState
+from pydantic import BaseModel, Field
 
 from .config import response_model
+from .message_utils import get_current_question
+
+
+class RewrittenQuestion(BaseModel):
+    rewritten_question: str = Field(
+        description="A concise rewritten search question without explanation."
+    )
 
 
 REWRITE_PROMPT = (
-    "Look at the input and try to reason about the underlying semantic intent / meaning.\n"
-    "Here is the initial question:"
-    "\n ------- \n"
-    "{question}"
-    "\n ------- \n"
-    "Formulate an improved question:"
+    "Rewrite the user's question to improve retrieval quality.\n"
+    "Return only the rewritten question.\n"
+    "Do not include analysis, reasoning, labels, markdown, or extra text.\n"
+    "Original question: {question}"
 )
 
+
 def rewrite_question(state: MessagesState):
-    """Rewrite the original user question."""
-    messages = state["messages"]
-    question = messages[0].content
+    """Rewrite the current user question into a cleaner retrieval query."""
+    question = get_current_question(state["messages"])
     prompt = REWRITE_PROMPT.format(question=question)
-    response = response_model.invoke([{"role": "user", "content": prompt}])
-    return {"messages": [HumanMessage(content=response.content)]}
+    structured_model = response_model.with_structured_output(
+        RewrittenQuestion,
+        method="function_calling",
+        strict=True,
+    )
+    response = structured_model.invoke([{"role": "user", "content": prompt}])
+    rewritten_question = response.rewritten_question.strip() or question
+    return {"messages": [HumanMessage(content=rewritten_question)]}
 
 
 if __name__ == "__main__":

@@ -1,8 +1,10 @@
 from typing import Literal
 
+from langchain_core.messages import HumanMessage
 from langgraph.graph import MessagesState
 
 from .config import response_model
+from .message_utils import get_current_question
 from .retrieval import retrieve_blog_posts
 
 GRADE_PROMPT = (
@@ -16,8 +18,9 @@ GRADE_PROMPT = (
 
 def generate_query_or_respond(state: MessagesState):
     """Respond directly or call the retriever tool based on the current question."""
+    question = get_current_question(state["messages"])
     response = response_model.bind_tools([retrieve_blog_posts]).invoke(
-        state["messages"]
+        [HumanMessage(content=question)]
     )
     return {"messages": [response]}
 
@@ -26,7 +29,7 @@ def grade_documents(
     state: MessagesState,
 ) -> Literal["generate_answer", "rewrite_question"]:
     """Determine whether the retrieved documents are relevant to the question."""
-    question = state["messages"][0].content
+    question = get_current_question(state["messages"])
     context = state["messages"][-1].content
 
     prompt = GRADE_PROMPT.format(question=question, context=context)
