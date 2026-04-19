@@ -1,6 +1,6 @@
 from langgraph.graph import MessagesState
 
-from config import response_model
+from .config import response_model
 
 
 GENERATE_PROMPT = (

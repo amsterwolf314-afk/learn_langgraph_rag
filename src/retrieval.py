@@ -5,7 +5,7 @@ from langchain_core.vectorstores import InMemoryVectorStore
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 from langchain.tools import tool
 
-from config import BLOG_URLS, build_embeddings
+from .config import BLOG_URLS, build_embeddings
 
 
 @lru_cache(maxsize=1)

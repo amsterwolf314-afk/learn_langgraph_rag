@@ -2,8 +2,8 @@ from typing import Literal
 
 from langgraph.graph import MessagesState
 
-from config import response_model
-from retrieval import retrieve_blog_posts
+from .config import response_model
+from .retrieval import retrieve_blog_posts
 
 GRADE_PROMPT = (
     "You are a grader assessing relevance of a retrieved document to a user question. \n "

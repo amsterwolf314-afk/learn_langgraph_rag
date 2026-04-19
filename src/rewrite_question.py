@@ -1,7 +1,7 @@
 from langchain_core.messages import HumanMessage, convert_to_messages
 from langgraph.graph import MessagesState
 
-from config import response_model
+from .config import response_model
 
 
 REWRITE_PROMPT = (
