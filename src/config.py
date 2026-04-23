@@ -23,17 +23,20 @@ RAG_CHUNK_SIZE = int(os.getenv("RAG_CHUNK_SIZE", "100"))
 RAG_CHUNK_OVERLAP = int(os.getenv("RAG_CHUNK_OVERLAP", "50"))
 
 
+def _get_required_env(name: str) -> str:
+    value = os.getenv(name)
+    if not value:
+        raise RuntimeError(
+            f"Missing {name}. Please set it in the environment, ~/.zshrc, or .env before running the project."
+        )
+    return value
+
+
 @lru_cache(maxsize=1)
 def build_embeddings() -> OpenAIEmbeddings:
-    api_key = os.getenv("EMBED_API_KEY")
-    if not api_key:
-        raise RuntimeError(
-            "Missing EMBED_API_KEY. Please set it in the environment, ~/.zshrc, or .env before running rag.py."
-        )
-
     params = {
         "model": os.getenv("EMBED_MODEL_NAME", "text-embedding-v3"),
-        "api_key": api_key,
+        "api_key": _get_required_env("EMBED_API_KEY"),
         "check_embedding_ctx_length": False,
         "chunk_size": 10,
     }
@@ -46,9 +49,9 @@ def build_embeddings() -> OpenAIEmbeddings:
 
 def build_chat_model():
     return init_chat_model(
-        model=os.getenv("LLM_MODEL_ID"),
+        model=_get_required_env("LLM_MODEL_ID"),
         model_provider="openai",
-        api_key=os.getenv("LLM_API_KEY"),
+        api_key=_get_required_env("LLM_API_KEY"),
         base_url=os.getenv("LLM_BASE_URL"),
         temperature=0,
         timeout=float(os.getenv("LLM_TIMEOUT", "60")),

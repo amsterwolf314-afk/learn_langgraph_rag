@@ -12,3 +12,5 @@ ENV/
 .python-version
 __pycache__/
 *.py[cod]
+.DS_Store
+*.log
