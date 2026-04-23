@@ -47,7 +47,8 @@ def build_embeddings() -> OpenAIEmbeddings:
     return OpenAIEmbeddings(**params)
 
 
-def build_chat_model():
+@lru_cache(maxsize=1)
+def get_response_model():
     return init_chat_model(
         model=_get_required_env("LLM_MODEL_ID"),
         model_provider="openai",
@@ -66,6 +67,3 @@ def get_vectorstore_cache_manifest() -> dict[str, object]:
         "embed_model_name": os.getenv("EMBED_MODEL_NAME", "text-embedding-v3"),
         "embed_base_url": os.getenv("EMBED_BASE_URL"),
     }
-
-
-response_model = build_chat_model()

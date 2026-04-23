@@ -1,7 +1,8 @@
 {
-    "dependencies":["."],
-    "graphs":{
-        "agent":"src.rag:graph"
-    },
-    "env":".env"
+  "dependencies": ["./"],
+  "graphs": {
+    "agent": "./src/rag.py:graph"
+  },
+  "env": "./.env",
+  "python_version": "3.11"
 }

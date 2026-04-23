@@ -1,7 +1,7 @@
 from langgraph.graph import MessagesState
 
-from .config import response_model
-from .message_utils import get_current_question
+from src.config import get_response_model
+from src.message_utils import get_current_question
 
 
 GENERATE_PROMPT = (
@@ -18,5 +18,5 @@ def generate_answer(state: MessagesState):
     question = get_current_question(state["messages"])
     context = state["messages"][-1].content
     prompt = GENERATE_PROMPT.format(question=question, context=context)
-    response = response_model.invoke([{"role": "user", "content": prompt}])
+    response = get_response_model().invoke([{"role": "user", "content": prompt}])
     return {"messages": [response]}

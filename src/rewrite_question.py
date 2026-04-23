@@ -2,8 +2,8 @@ from langchain_core.messages import HumanMessage, convert_to_messages
 from langgraph.graph import MessagesState
 from pydantic import BaseModel, Field
 
-from .config import response_model
-from .message_utils import get_current_question
+from src.config import get_response_model
+from src.message_utils import get_current_question
 
 
 class RewrittenQuestion(BaseModel):
@@ -24,7 +24,7 @@ def rewrite_question(state: MessagesState):
     """Rewrite the current user question into a cleaner retrieval query."""
     question = get_current_question(state["messages"])
     prompt = REWRITE_PROMPT.format(question=question)
-    structured_model = response_model.with_structured_output(
+    structured_model = get_response_model().with_structured_output(
         RewrittenQuestion,
         method="function_calling",
         strict=True,

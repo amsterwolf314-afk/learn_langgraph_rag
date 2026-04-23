@@ -7,7 +7,7 @@ from langchain_core.vectorstores import InMemoryVectorStore
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 from langchain.tools import tool
 
-from .config import (
+from src.config import (
     BLOG_URLS,
     RAG_CHUNK_OVERLAP,
     RAG_CHUNK_SIZE,
